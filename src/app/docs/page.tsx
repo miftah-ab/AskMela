@@ -4,9 +4,9 @@ import Link from 'next/link'
 export default function DocsPage() {
   return (
     <div>
-      <h1 id="intro" style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1rem', letterSpacing: '-0.02em' }}>Introduction</h1>
+      <h1 id="intro" style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1rem', letterSpacing: '-0.02em' }}>መግቢያ (Introduction)</h1>
       <p style={{ fontSize: '1.2rem', color: '#64748B', marginBottom: '2rem' }}>
-        AskMela is the easiest way to add an AI assistant to your Ethiopian business. It talks to your customers in Amharic and English, answering their questions about products, pricing, and services instantly.
+        AskMela ለኢትዮጵያ ንግድዎ የAI ረዳት በቀላሉ የሚጨምሩበት መንገድ ነው። ለደንበኞችዎ በአማርኛ እና በእንግሊዝኛ ስለ ምርቶች፣ ዋጋዎች እና አገልግሎቶች ወዲያውኑ ምላሽ ይሰጣል።
       </p>
 
       <div style={{ 

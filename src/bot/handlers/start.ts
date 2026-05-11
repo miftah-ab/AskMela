@@ -28,22 +28,22 @@ export async function handleStart(ctx: Context) {
     // Already registered — show dashboard summary
     const link = buildBotLink(existing.unique_link)
     await ctx.reply(
-      `🏪 *AskMela Owner Mode — ${existing.name}*\n\n` +
-        `📊 *Today's Stats:* ${stats.total_questions} questions, ${stats.answered_questions} answered.\n\n` +
-        `✅ *Bot is live:* Customers can chat here:\n\`${link}\`\n\n` +
-        `💡 *How to teach:* Just send me any text, voice message, or photo, and I will learn it instantly!\n\n` +
-        `*Commands:* /stats, /help, /clear`,
+      `🏪 *AskMela የባለቤት ሁኔታ (Owner Mode) — ${existing.name}*\n\n` +
+        `📊 *የዛሬ መረጃ (Today's Stats):* ${stats.total_questions} ጥያቄዎች፣ ${stats.answered_questions} ምላሽ አግኝተዋል።\n\n` +
+        `✅ *ቦቱ ስራ ላይ ነው (Bot is Live):* ደንበኞች በዚህ ሊንክ ማግኘት ይችላሉ:\n\`${link}\`\n\n` +
+        `💡 *ረዳትዎን ያስተምሩ:* ማንኛውንም ጽሁፍ፣ ድምፅ ወይም ፎቶ ይላኩልኝ። ወዲያውኑ እማራለሁ!\n\n` +
+        `*ትዕዛዞች:* /stats, /help, /clear`,
       {
         parse_mode: 'Markdown',
         reply_markup: {
           inline_keyboard: [
             [
-              { text: '📊 Full Stats', callback_data: 'stats' },
-              { text: '📤 Share Link', url: `https://t.me/share/url?url=${encodeURIComponent(link)}&text=Chat%20with%20our%20AI%20assistant!` },
+              { text: '📊 ሙሉ መረጃ (Stats)', callback_data: 'stats' },
+              { text: '📤 ሊንክ ያጋሩ (Share)', url: `https://t.me/share/url?url=${encodeURIComponent(link)}&text=Chat%20with%20our%20AI%20assistant!` },
             ],
             [
-              { text: '📚 Manage Knowledge', url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard` },
-              { text: '❓ Help', callback_data: 'help' },
+              { text: '📚 መረጃዎችን ያስተዳድሩ (Dashboard)', url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard` },
+              { text: '❓ እርዳታ (Help)', callback_data: 'help' },
             ],
           ],
         },

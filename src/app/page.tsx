@@ -27,12 +27,12 @@ export default function LandingPage() {
           </Link>
           
           <div className={styles.navLinks}>
-            <a href="#how" className={styles.navLink}>How it works</a>
-            <a href="#integrations" className={styles.navLink}>Integrations</a>
-            <a href="#pricing" className={styles.navLink}>Pricing</a>
-            <a href="/docs" className={styles.navLink}>Docs</a>
-            <Link href="/dashboard" className={styles.navLoginBtn}>Login</Link>
-            <a href="https://t.me/AskMelaBot" className={styles.navCta}>Get Started Free</a>
+            <a href="#how" className={styles.navLink}>እንዴት እንደሚሰራ / How it works</a>
+            <a href="#integrations" className={styles.navLink}>ማገናኛዎች / Integrations</a>
+            <a href="#pricing" className={styles.navLink}>ዋጋ / Pricing</a>
+            <a href="/docs" className={styles.navLink}>መመሪያ / Docs</a>
+            <Link href="/dashboard" className={styles.navLoginBtn}>ይግቡ / Login</Link>
+            <a href="https://t.me/AskMelaBot" className={styles.navCta}>በነፃ ይጀምሩ / Get Started Free</a>
           </div>
 
           <button className={styles.hamburger} onClick={() => setMobileMenuOpen(true)}>
@@ -59,18 +59,18 @@ export default function LandingPage() {
         <div className="container-lg">
           <div className={styles.heroPill}>
             <span className={styles.heroPillDot}></span>
-            Now available for Ethiopian businesses
+            አሁን በኢትዮጵያ ለሚገኙ ንግዶች ይገኛል / Now in Ethiopia
           </div>
-          <h1 className={styles.heroTitle}>Your business.<br/>Always answering.</h1>
+          <h1 className={styles.heroTitle}>ንግድዎ ሁልጊዜ<br/>ምላሽ እንዲሰጥ ያድርጉ።</h1>
           <p className={styles.heroSub}>
-            AI assistant for Ethiopian businesses. Answers your customers instantly in Amharic and English — on Telegram, your website, or anywhere you need it.
+            ለኢትዮጵያ ንግዶች የተሰራ የAI ረዳት። በቴሌግራም፣ በድረ-ገጽዎ ወይም በማንኛውም ቦታ ለደንበኞችዎ በአማርኛ እና በእንግሊዝኛ ፈጣን ምላሽ ይሰጣል።
           </p>
           <div className={styles.heroCtas}>
-            <a href="https://t.me/AskMelaBot" className={styles.heroCtaPrimary}>Start Free</a>
-            <a href="#how" className={styles.heroCtaSecondary}>See how it works →</a>
+            <a href="https://t.me/AskMelaBot" className={styles.heroCtaPrimary}>በነፃ ይጀምሩ</a>
+            <a href="#how" className={styles.heroCtaSecondary}>እንዴት እንደሚሰራ ይመልከቱ →</a>
           </div>
           <div className={styles.heroTrust}>
-            Free to start <span>·</span> No credit card <span>·</span> Setup in 2 minutes
+            በነፃ ይጀምሩ <span>·</span> ክሬዲት ካርድ አያስፈልግም <span>·</span> በ2 ደቂቃ ውስጥ ዝግጁ
           </div>
 
           {/* Hero Mockup */}
@@ -138,31 +138,31 @@ export default function LandingPage() {
       {/* How it Works */}
       <section className={styles.how} id="how">
         <div className="container-lg">
-          <div className={styles.sectionLabel}>HOW IT WORKS</div>
-          <h2 className={styles.sectionTitle}>Simple for you. Magic for your customers.</h2>
+          <div className={styles.sectionLabel}>እንዴት እንደሚሰራ / HOW IT WORKS</div>
+          <h2 className={styles.sectionTitle}>ለእርስዎ ቀላል። ለደንበኞችዎ አስደናቂ።</h2>
           <div className={styles.stepsRow}>
             <div className={styles.step}>
               <div className={styles.stepNumBig}>01</div>
               <div className={styles.stepIcon}>🏢</div>
               <div className={styles.stepContent}>
-                <h3 className={styles.stepTitle}>Register your business</h3>
-                <p className={styles.stepDesc}>Enter your business name and one line about what you do. Your AI assistant is live in 60 seconds.</p>
+                <h3 className={styles.stepTitle}>ንግድዎን ይመዝግቡ</h3>
+                <p className={styles.stepDesc}>የንግድዎን ስም እና ስለሚሰጡት አገልግሎት ጥቂት ቃላት ያስገቡ። የAI ረዳትዎ በ60 ሰከንድ ውስጥ ዝግጁ ይሆናል።</p>
               </div>
             </div>
             <div className={styles.step}>
               <div className={styles.stepNumBig}>02</div>
               <div className={styles.stepIcon}>🧠</div>
               <div className={styles.stepContent}>
-                <h3 className={styles.stepTitle}>Add your knowledge</h3>
-                <p className={styles.stepDesc}>Send voice messages, text, or photos to teach your assistant about your products and prices.</p>
+                <h3 className={styles.stepTitle}>መረጃ ያስገቡ</h3>
+                <p className={styles.stepDesc}>ረዳትዎ ስለ ምርቶችዎ እና ዋጋዎ እንዲያውቅ በድምፅ፣ በጽሁፍ ወይም በፎቶ መረጃ ይላኩለት።</p>
               </div>
             </div>
             <div className={styles.step}>
               <div className={styles.stepNumBig}>03</div>
               <div className={styles.stepIcon}>🔗</div>
               <div className={styles.stepContent}>
-                <h3 className={styles.stepTitle}>Share with customers</h3>
-                <p className={styles.stepDesc}>Give customers your unique link or embed the widget. They ask. Mela answers. Instantly.</p>
+                <h3 className={styles.stepTitle}>ለደንበኞች ያጋሩ</h3>
+                <p className={styles.stepDesc}>የራስዎን ሊንክ ለደንበኞች ይስጡ ወይም በድረ-ገጽዎ ላይ ይለጥፉ። ደንበኞች ይጠይቃሉ፣ መላ ወዲያውኑ ይመልሳል።</p>
               </div>
             </div>
           </div>
@@ -172,63 +172,63 @@ export default function LandingPage() {
       {/* Integrations */}
       <section className={styles.integrations} id="integrations">
         <div className="container-lg">
-          <div className={styles.sectionLabel}>INTEGRATIONS</div>
-          <h2 className={styles.sectionTitle}>Works wherever your customers are.</h2>
-          <p className={styles.sectionSub}>Choose how you want to deploy Ask Mela. Use one or all three.</p>
+          <div className={styles.sectionLabel}>ማገናኛዎች / INTEGRATIONS</div>
+          <h2 className={styles.sectionTitle}>ደንበኞችዎ ባሉበት ቦታ ሁሉ ይስሩ።</h2>
+          <p className={styles.sectionSub}>Ask Melaን እንዴት መጠቀም እንደሚፈልጉ ይምረጡ። አንዱን ወይም ሶስቱንም መጠቀም ይችላሉ።</p>
           
           <div className={styles.integrationCards}>
             <div className={styles.integrationCard}>
               <div className={styles.integrationCardTop}>
                 <div className={styles.integrationIconWrap} style={{background: '#E0F2FE', color: '#2CA5E0'}}>T</div>
-                <span className="badge-green">Most popular</span>
+                <span className="badge-green">በብዛት ጥቅም ላይ የዋለ</span>
               </div>
-              <h3 className={styles.integrationTitle}>Telegram Bot</h3>
-              <p className={styles.integrationDesc}>Share your unique link. They open Telegram and get instant answers. No app download.</p>
+              <h3 className={styles.integrationTitle}>የቴሌግራም ቦት (Telegram Bot)</h3>
+              <p className={styles.integrationDesc}>የራስዎን ልዩ ሊንክ ያጋሩ። ደንበኞች ቴሌግራምን በመጠቀም ወዲያውኑ ምላሽ ያገኛሉ። ምንም አይነት አፕሊኬሽን ማውረድ አያስፈልጋቸውም።</p>
               <div className={styles.integrationFeatures}>
-                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> Works on any phone</div>
-                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> Voice messages supported</div>
-                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> Amharic and English</div>
+                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> በማንኛውም ስልክ ላይ ይሰራል</div>
+                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> የድምፅ መልዕክት ይቀበላል</div>
+                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> በአማርኛ እና በእንግሊዝኛ</div>
               </div>
               <div className={styles.integrationCode}>
                 t.me/AskMelaBot?start=biz_abc123
               </div>
-              <a href="#" className={styles.integrationCta}>Get your link →</a>
+              <a href="#" className={styles.integrationCta}>ሊንክዎን ያግኙ →</a>
             </div>
 
             <div className={styles.integrationCard}>
               <div className={styles.integrationCardTop}>
                 <div className={styles.integrationIconWrap} style={{background: '#DCFCE7', color: '#0F172A'}}>&lt;/&gt;</div>
-                <span className="badge-blue">Most flexible</span>
+                <span className="badge-blue">ተለዋዋጭ</span>
               </div>
-              <h3 className={styles.integrationTitle}>Website Widget</h3>
-              <p className={styles.integrationDesc}>Paste one line of code on your website. A chat bubble appears. Works on any platform.</p>
+              <h3 className={styles.integrationTitle}>የድረ-ገጽ ዊጅት (Website Widget)</h3>
+              <p className={styles.integrationDesc}>አንድ መስመር ኮድ በድረ-ገጽዎ ላይ ይለጥፉ። የውይይት ሳጥን ይመጣል። በማንኛውም አይነት ድረ-ገጽ ላይ ይሰራል።</p>
               <div className={styles.integrationFeatures}>
-                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> One line to install</div>
-                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> Matches your brand</div>
-                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> Mobile responsive</div>
+                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> በቀላሉ የሚገጠም</div>
+                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> ከድረ-ገጽዎ ቀለም ጋር የሚስማማ</div>
+                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> በሞባይል ስልክ የሚመች</div>
               </div>
               <div className={styles.integrationCode}>
                 <span className={styles.cBlue}>&lt;script</span> <span className={styles.cPink}>src=</span><span className={styles.cGreen}>&quot;https://askmela.xyz/widget.js&quot;</span>...
               </div>
-              <a href="/docs" className={styles.integrationCta}>View widget docs →</a>
+              <a href="/docs" className={styles.integrationCta}>መመሪያውን ይመልከቱ →</a>
             </div>
 
             <div className={styles.integrationCard}>
               <div className={styles.integrationCardTop}>
                 <div className={styles.integrationIconWrap} style={{background: '#F3E8FF', color: '#7C3AED'}}>{`{}`}</div>
-                <span className="badge-purple">Most powerful</span>
+                <span className="badge-purple">ኃይለኛ</span>
               </div>
               <h3 className={styles.integrationTitle}>REST API</h3>
-              <p className={styles.integrationDesc}>Integrate Ask Mela directly into your own app or workflow. Full control over the UI.</p>
+              <p className={styles.integrationDesc}>Ask Melaን በቀጥታ በእራስዎ አፕሊኬሽን ውስጥ ያስገቡ። ሙሉ በሙሉ በእርስዎ ቁጥጥር ስር።</p>
               <div className={styles.integrationFeatures}>
-                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> Simple JSON API</div>
-                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> All languages supported</div>
-                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> Webhook notifications</div>
+                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> ቀላል የJSON API</div>
+                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> ሁሉንም ቋንቋዎች ይደግፋል</div>
+                <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> የዌብሁክ (Webhook) ማሳወቂያዎች</div>
               </div>
               <div className={styles.integrationCode}>
                 curl -X POST https://askmela.xyz/api/v1/ask ...
               </div>
-              <a href="/docs" className={styles.integrationCta}>View API docs →</a>
+              <a href="/docs" className={styles.integrationCta}>የAPI መመሪያ →</a>
             </div>
           </div>
         </div>
@@ -237,49 +237,49 @@ export default function LandingPage() {
       {/* Pricing */}
       <section className={styles.pricing} id="pricing">
         <div className="container-lg">
-          <div className={styles.sectionLabel}>PRICING</div>
-          <h2 className={styles.sectionTitle}>Start free. Grow as you go.</h2>
+          <div className={styles.sectionLabel}>ዋጋ / PRICING</div>
+          <h2 className={styles.sectionTitle}>በነፃ ይጀምሩ። ንግድዎ ሲያድግ ያሳድጉ።</h2>
           <div className={styles.pricingGrid}>
             <div className={styles.pricingCard}>
-              <div className={styles.pricingPlanLabel}>FREE</div>
-              <div className={styles.pricingPrice}>0 ETB<span className={styles.pricingPriceSub}>/mo</span></div>
-              <p className={styles.pricingDesc}>Perfect to get started</p>
+              <div className={styles.pricingPlanLabel}>ነፃ / FREE</div>
+              <div className={styles.pricingPrice}>0 ብር<span className={styles.pricingPriceSub}>/በወር</span></div>
+              <p className={styles.pricingDesc}>ለመጀመር ፍጹም ነው</p>
               <ul className={styles.pricingFeatures}>
-                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> Telegram bot</li>
-                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> 50 questions/month</li>
-                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> Amharic + English</li>
+                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> የቴሌግራም ቦት</li>
+                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> 50 ጥያቄዎች በወር</li>
+                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> በአማርኛ እና በእንግሊዝኛ</li>
               </ul>
-              <button className="btn-secondary">Start Free</button>
+              <button className="btn-secondary">በነፃ ይጀምሩ</button>
             </div>
             
             <div className={`${styles.pricingCard} ${styles.pricingCardPro}`}>
               <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                <div className={`${styles.pricingPlanLabel} ${styles.pricingPlanLabelPro}`}>PRO</div>
-                <span className="badge-green">Most popular</span>
+                <div className={`${styles.pricingPlanLabel} ${styles.pricingPlanLabelPro}`}>ፕሮ / PRO</div>
+                <span className="badge-green">ተመራጭ</span>
               </div>
-              <div className={styles.pricingPrice}>200 ETB<span className={styles.pricingPriceSub}>/mo</span></div>
-              <p className={styles.pricingDesc}>For active businesses</p>
+              <div className={styles.pricingPrice}>200 ብር<span className={styles.pricingPriceSub}>/በወር</span></div>
+              <p className={styles.pricingDesc}>ለሚንቀሳቀሱ ንግዶች</p>
               <ul className={styles.pricingFeatures}>
-                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> Everything in Free</li>
-                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> Unlimited questions</li>
-                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> Website widget</li>
+                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> ሁሉንም የነፃ አገልግሎቶች</li>
+                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> ያልተገደበ ጥያቄዎች</li>
+                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> የድረ-ገጽ ዊጅት</li>
               </ul>
-              <button className="btn-primary">Start Pro</button>
+              <button className="btn-primary">ፕሮ ይጀምሩ</button>
             </div>
 
             <div className={styles.pricingCard}>
-              <div className={styles.pricingPlanLabel}>BUSINESS</div>
-              <div className={styles.pricingPrice}>500 ETB<span className={styles.pricingPriceSub}>/mo</span></div>
-              <p className={styles.pricingDesc}>For serious operations</p>
+              <div className={styles.pricingPlanLabel}>ቢዝነስ / BUSINESS</div>
+              <div className={styles.pricingPrice}>500 ብር<span className={styles.pricingPriceSub}>/በወር</span></div>
+              <p className={styles.pricingDesc}>ለትላልቅ ስራዎች</p>
               <ul className={styles.pricingFeatures}>
-                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> Everything in Pro</li>
-                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> REST API access</li>
-                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> Custom bot username</li>
+                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> ሁሉንም የፕሮ አገልግሎቶች</li>
+                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> የREST API ተጠቃሚነት</li>
+                <li className={styles.pricingFeature}><span className={styles.pricingCheck}>✓</span> የራስዎ ቦት ስም</li>
               </ul>
-              <button className="btn-dark">Contact Us</button>
+              <button className="btn-dark">ያግኙን</button>
             </div>
           </div>
-          <p className={styles.pricingNote}>All prices in Ethiopian Birr. Cancel anytime.</p>
+          <p className={styles.pricingNote}>ሁሉም ዋጋዎች በኢትዮጵያ ብር ናቸው። በፈለጉት ጊዜ ማቆም ይችላሉ።</p>
         </div>
       </section>
 
