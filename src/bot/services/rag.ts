@@ -1,5 +1,5 @@
 import { generateEmbedding, generateAnswer } from './groq'
-import { searchDocuments, insertDocument } from './supabase'
+import { searchDocuments, insertDocument, supabase } from './supabase'
 
 // ─── RAG Search ───────────────────────────────────────────────────────────────
 
@@ -20,18 +20,31 @@ export async function ragSearch(params: {
   const queryEmbedding = await generateEmbedding(question)
 
   // 2. Search vector store
-  const matches = await searchDocuments(queryEmbedding, businessId, 0.5, 10)
+  let matches = await searchDocuments(queryEmbedding, businessId, 0.4, 10) // Lowered threshold slightly
   
-  console.log(`🔍 RAG Search for "${question}" (${businessId}):`)
-  console.log(`   - Chunks found: ${matches.length}`)
-  
-  if (matches.length === 0) {
-    console.log('⚠️ No chunks found above similarity threshold (0.5).')
-  } else {
-    matches.forEach((m, i) => {
-      console.log(`   [${i+1}] Score: ${m.similarity.toFixed(4)} | Content: ${m.content.substring(0, 100)}...`)
-    })
+  // 3. Keyword Search Fallback (Crucial since embeddings are currently hashing placeholders)
+  if (matches.length < 3) {
+    const { data: keywordMatches } = await supabase
+      .from('AskMelaDocuments')
+      .select('id, content')
+      .eq('business_id', businessId)
+      .ilike('content', `%${question.split(' ')[0]}%`) // Search first word
+      .limit(5)
+
+    if (keywordMatches && keywordMatches.length > 0) {
+      console.log(`🔍 Keyword Search found ${keywordMatches.length} extra chunks.`)
+      // Merge unique results
+      const existingIds = new Set(matches.map(m => m.id))
+      keywordMatches.forEach((m: any) => {
+        if (!existingIds.has(m.id)) {
+          matches.push({ ...m, similarity: 0.9 }) // High similarity for exact keyword match
+        }
+      })
+    }
   }
+
+  console.log(`🔍 RAG Search for "${question}" (${businessId}):`)
+  console.log(`   - Total chunks found: ${matches.length}`)
 
   // 3. Build context string
   const context = matches.map((m) => m.content).join('\n\n---\n\n')

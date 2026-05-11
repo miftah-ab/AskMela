@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import styles from './page.module.css'
 
@@ -20,18 +20,32 @@ export default function CustomerChatPage() {
   const [messages, setMessages] = useState<any[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Mock business data fetch
-    setBusiness({ name: 'Selam Coffee Shop', description: 'Ethiopian coffee and traditional food' })
-    setMessages([
-      { role: 'assistant', content: '👋 ሰላም! ማንኛውንም ጥያቄ ይጠይቁኝ።\nHello! Ask me anything about our business.' }
-    ])
+    if (!id) return
+
+    // Fetch real business data
+    fetch(`/api/v1/public/business/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.name) {
+          setBusiness(data)
+          setMessages([
+            { role: 'assistant', content: `👋 ሰላም! እንኳን ወደ ${data.name} በደህና መጡ። ማንኛውንም ጥያቄ ይጠይቁኝ።\nHello! Welcome to ${data.name}. Feel free to ask me anything.` }
+          ])
+        }
+      })
+      .catch(err => console.error('Failed to load business info', err))
   }, [id])
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!input.trim() || loading) return
+    if (!input.trim() || loading || !business) return
 
     const userMsg = { role: 'user', content: input }
     setMessages(prev => [...prev, userMsg])
@@ -39,9 +53,18 @@ export default function CustomerChatPage() {
     setLoading(true)
 
     try {
-      // API call placeholder for RAG search
-      await new Promise(r => setTimeout(r, 1000))
-      setMessages(prev => [...prev, { role: 'assistant', content: 'ይህ አገልግሎት በቅርቡ በድረ-ገጽ ላይ ይገኛል። ለጊዜው በቴሌግራም ይጠቀሙ።\nThis web chat is coming soon. Please use Telegram for now.' }])
+      const response = await fetch('/api/v1/public/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessId: business.id, question: input })
+      })
+
+      const data = await response.json()
+      
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: data.answer || "I'm sorry, I don't have information about that yet." 
+      }])
     } catch (err) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Error connecting to assistant.' }])
     } finally {
@@ -55,11 +78,11 @@ export default function CustomerChatPage() {
         <div className={styles.bizInfo}>
           <AskMelaLogo size={32} />
           <div>
-            <h1 className={styles.bizName}>{business?.name || 'Loading...'}</h1>
+            <h1 className={styles.bizName}>{business?.name || 'AskMela Assistant'}</h1>
             <p className={styles.bizSub}>AI Business Assistant</p>
           </div>
         </div>
-        <a href={`https://t.me/AskMelaAIBot?start=${id}`} className="btn-ghost" style={{ fontSize: 12 }}>
+        <a href={`https://t.me/AskMelaBot?start=${id}`} className="btn-ghost" style={{ fontSize: 12 }}>
           Open in Telegram
         </a>
       </header>
@@ -71,6 +94,7 @@ export default function CustomerChatPage() {
           </div>
         ))}
         {loading && <div className={styles.loading}>Bot is thinking...</div>}
+        <div ref={messagesEndRef} />
       </main>
 
       <footer className={styles.footer}>

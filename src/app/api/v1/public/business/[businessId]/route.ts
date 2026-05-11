@@ -8,8 +8,8 @@ export async function GET(
   const { businessId } = await params
   const { data, error } = await supabase
     .from('AskMelaBusinesses')
-    .select('name, description, is_active')
-    .eq('id', businessId)
+    .select('id, name, description, is_active')
+    .or(`id.eq.${businessId},unique_link.eq.${businessId}`)
     .single()
 
   if (error || !data) {
