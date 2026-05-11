@@ -1,0 +1,110 @@
+.adminPage {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-secondary);
+}
+
+.main {
+  flex: 1;
+  margin-left: 240px;
+  padding: 40px;
+}
+
+.header {
+  margin-bottom: 40px;
+}
+
+.headerTitle h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+}
+
+.field {
+  margin-bottom: 24px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.preview {
+  background: #E6EBEF; /* Telegram-like background */
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 300px;
+}
+
+.previewHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.previewAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.previewName {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.previewBubble {
+  background: white;
+  padding: 12px 16px;
+  border-radius: 4px 12px 12px 12px;
+  font-size: 14px;
+  max-width: 90%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  white-space: pre-wrap;
+}
+
+.history {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.historyItem {
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  border-left: 4px solid var(--accent-blue);
+}
+
+.historyText {
+  font-size: 14px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.historyMeta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

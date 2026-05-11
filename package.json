@@ -1,0 +1,48 @@
+{
+  "name": "askmela",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:bot\"",
+    "dev:bot": "cross-env NODE_ENV=development tsx watch src/bot/index.ts",
+    "dev:web": "next dev",
+    "build:bot": "tsc -p tsconfig.bot.json",
+    "build:web": "next build",
+    "start:bot": "cross-env NODE_ENV=production node dist/bot/index.js",
+    "start:web": "next start",
+    "webhook:set": "tsx scripts/set-webhook.ts",
+    "webhook:delete": "tsx scripts/delete-webhook.ts",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:seed": "tsx scripts/seed.ts",
+    "dev:tunnel": "npx localtunnel --port 3000",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.5.1",
+    "@supabase/supabase-js": "^2.45.4",
+    "cross-env": "^7.0.3",
+    "dotenv": "^17.4.2",
+    "groq-sdk": "^0.7.0",
+    "next": "^16.2.6",
+    "postgres": "^3.4.9",
+    "react": "^18",
+    "react-dom": "^18",
+    "telegraf": "^4.16.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.21",
+    "cloudflared": "^0.7.1",
+    "concurrently": "^9.2.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.18",
+    "localtunnel": "^2.0.2",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "tsx": "^4.19.1",
+    "tunnelmole": "^2.4.0",
+    "typescript": "^5"
+  }
+}
