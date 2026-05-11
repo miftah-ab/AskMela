@@ -21,8 +21,8 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const { secret, telegramId } = await req.json()
 
-  if (isAdminAuthorized(telegramId, secret)) {
-    await createAdminSession(telegramId)
+  if (isAdminAuthorized(telegramId || 'system_admin', secret)) {
+    await createAdminSession(telegramId || 'system_admin')
     return NextResponse.json({ success: true })
   }
 

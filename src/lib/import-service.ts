@@ -1,3 +1,4 @@
+// @ts-ignore
 import Papa from 'papaparse'
 import * as XLSX from 'xlsx'
 const pdf = require('pdf-parse')
