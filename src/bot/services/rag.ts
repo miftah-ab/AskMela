@@ -20,10 +20,23 @@ export async function ragSearch(params: {
   const queryEmbedding = await generateEmbedding(question)
 
   // 2. Search vector store
-  const matches = await searchDocuments(queryEmbedding, businessId, 0.7, 5)
+  const matches = await searchDocuments(queryEmbedding, businessId, 0.5, 10)
+  
+  console.log(`🔍 RAG Search for "${question}" (${businessId}):`)
+  if (matches.length === 0) {
+    console.log('⚠️ No chunks found above similarity threshold.')
+  } else {
+    matches.forEach((m, i) => {
+      console.log(`   [${i+1}] Score: ${m.similarity.toFixed(4)} | Content: ${m.content.substring(0, 50)}...`)
+    })
+  }
 
   // 3. Build context string
   const context = matches.map((m) => m.content).join('\n\n---\n\n')
+  
+  if (context) {
+    console.log(`📝 Context passed to AI (${context.length} chars)`)
+  }
 
   // 4. Generate answer with LLM
   const answer = await generateAnswer({
@@ -33,6 +46,12 @@ export async function ragSearch(params: {
     question,
     language,
   })
+
+  if (answer) {
+    console.log('✅ AI Answer generated successfully.')
+  } else {
+    console.log('❌ AI could not find an answer in the provided context.')
+  }
 
   return answer
 }

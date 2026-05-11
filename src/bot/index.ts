@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 import path from 'path'
 import { Telegraf } from 'telegraf'
+import { getBusinessByOwnerId } from './services/supabase'
 
 // ─── Environment Validation ──────────────────────────────────────────────────
 const nodeEnv = process.env.NODE_ENV || 'development'
@@ -22,7 +23,6 @@ console.log(`🔧 Initializing AskMela Bot in ${nodeEnv} mode...`)
 for (const env of requiredEnv) {
   if (!process.env[env]) {
     console.error(`❌ CRITICAL ERROR: Missing environment variable: ${env}`)
-    console.error(`Check your .env.${nodeEnv} file or hosting provider settings.`)
     process.exit(1)
   }
 }
@@ -33,16 +33,17 @@ import { handleHelp } from './handlers/help'
 import { handleStats } from './handlers/stats'
 import { handleVoice } from './handlers/voice'
 import { handlePhoto } from './handlers/photo'
-import { handleMessage, setCustomerBusiness } from './handlers/customer'
+import { handleMessage, setCustomerBusiness, handleCustomerQuestion } from './handlers/customer'
 import { isAdmin, handleAdminStats, handleAdminAnnounce } from './handlers/admin'
 import { rateLimitMiddleware } from './middleware/rateLimit'
+import { handleOwnerUpdate, handleOwnerVoice, handleOwnerPhoto, handleClearKnowledge } from './handlers/update'
 
 const bot = new Telegraf(process.env.BOT_TOKEN!)
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 bot.use(rateLimitMiddleware)
 
-// ─── Commands & Handlers ───────────────────────────────────────────────────────
+// ─── Commands ─────────────────────────────────────────────────────────────────
 bot.start(async (ctx) => {
   const payload = ctx.startPayload
   if (payload?.startsWith('biz_')) {
@@ -53,13 +54,44 @@ bot.start(async (ctx) => {
 
 bot.command('help', handleHelp)
 bot.command('stats', handleStats)
+bot.command('clear', handleClearKnowledge)
+
+// Admin Commands
 bot.command('adminstats', isAdmin, handleAdminStats)
 bot.command('adminannounce', isAdmin, handleAdminAnnounce)
 
-bot.on('voice', handleVoice)
-bot.on('photo', handlePhoto)
+// ─── Unified Handlers ─────────────────────────────────────────────────────────
+
+// Voice handler (Owner vs Customer)
+bot.on('voice', async (ctx) => {
+  const userId = ctx.from?.id
+  if (!userId) return
+  const isOwner = !!(await getBusinessByOwnerId(userId))
+  
+  if (isOwner) {
+    await handleOwnerVoice(ctx)
+  } else {
+    await handleVoice(ctx)
+  }
+})
+
+// Photo handler (Owner vs Customer)
+bot.on('photo', async (ctx) => {
+  const userId = ctx.from?.id
+  if (!userId) return
+  const isOwner = !!(await getBusinessByOwnerId(userId))
+  
+  if (isOwner) {
+    await handleOwnerPhoto(ctx)
+  } else {
+    await handlePhoto(ctx)
+  }
+})
+
+// Text handler (Owner vs Customer)
 bot.on('text', handleMessage)
 
+// ─── Callback Queries ─────────────────────────────────────────────────────────
 bot.action('stats', async (ctx) => {
   await ctx.answerCbQuery()
   await handleStats(ctx)
@@ -74,14 +106,13 @@ bot.catch((err: any, ctx) => {
   console.error(`💥 Bot error for ${ctx.updateType}:`, err.message || err)
 })
 
-// ─── Launch Logic ─────────────────────────────────────────────────────────────
+// ─── Launch ───────────────────────────────────────────────────────────────────
 async function launch() {
   if (nodeEnv === 'production') {
     const webhookUrl = process.env.WEBHOOK_URL!
     const secretToken = process.env.WEBHOOK_SECRET!
     const port = parseInt(process.env.PORT || '3000')
 
-    console.log(`📡 Setting up webhook: ${webhookUrl}`)
     await bot.launch({
       webhook: {
         domain: webhookUrl,
@@ -91,27 +122,16 @@ async function launch() {
       },
     })
     console.log(`🚀 AskMela Bot is LIVE on Render (Port: ${port})`)
-    console.log(`📡 Webhook Path: /webhook`)
   } else {
-    console.log('🤖 Starting bot in Long Polling mode...')
     await bot.launch()
-    console.log('✅ Bot is running locally.')
+    console.log('✅ Bot is running in Polling mode.')
   }
 }
 
-launch().catch((err) => {
-  console.error('❌ Failed to launch bot:', err)
-  process.exit(1)
-})
+launch().catch(console.error)
 
-// ─── Graceful Shutdown ────────────────────────────────────────────────────────
-const shutdown = (signal: string) => {
-  console.log(`\n🛑 Received ${signal}. Shutting down bot...`)
-  bot.stop(signal)
-  process.exit(0)
-}
-
-process.once('SIGINT', () => shutdown('SIGINT'))
-process.once('SIGTERM', () => shutdown('SIGTERM'))
+// Graceful shutdown
+process.once('SIGINT', () => bot.stop('SIGINT'))
+process.once('SIGTERM', () => bot.stop('SIGTERM'))
 
 export { bot }
