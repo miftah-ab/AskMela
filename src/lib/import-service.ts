@@ -3,8 +3,8 @@ import Papa from 'papaparse'
 import * as XLSX from 'xlsx'
 const pdf = require('pdf-parse')
 const mammoth = require('mammoth')
-import { supabase } from '@/bot/services/supabase'
-import { generateEmbedding } from '@/bot/services/groq'
+import { supabase } from '../bot/services/supabase'
+import { generateEmbedding } from '../bot/services/groq'
 
 export interface ImportResult {
   success: boolean

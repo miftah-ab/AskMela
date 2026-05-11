@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from 'crypto'
-import { supabase } from '@/bot/services/supabase'
+import { supabase } from '../bot/services/supabase'
 
 export function generateApiKey() {
   const bytes = randomBytes(32)
