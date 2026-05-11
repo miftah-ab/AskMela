@@ -23,11 +23,13 @@ export async function ragSearch(params: {
   const matches = await searchDocuments(queryEmbedding, businessId, 0.5, 10)
   
   console.log(`🔍 RAG Search for "${question}" (${businessId}):`)
+  console.log(`   - Chunks found: ${matches.length}`)
+  
   if (matches.length === 0) {
-    console.log('⚠️ No chunks found above similarity threshold.')
+    console.log('⚠️ No chunks found above similarity threshold (0.5).')
   } else {
     matches.forEach((m, i) => {
-      console.log(`   [${i+1}] Score: ${m.similarity.toFixed(4)} | Content: ${m.content.substring(0, 50)}...`)
+      console.log(`   [${i+1}] Score: ${m.similarity.toFixed(4)} | Content: ${m.content.substring(0, 100)}...`)
     })
   }
 

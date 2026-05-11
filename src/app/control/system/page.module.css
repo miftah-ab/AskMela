@@ -1,0 +1,182 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 24px;
+  border-radius: 16px;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #888880;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statsRow {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.statValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: 'Geist Mono', monospace;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: #888880;
+}
+
+.costBox {
+  background: rgba(0, 255, 136, 0.05);
+  border: 1px solid rgba(0, 255, 136, 0.1);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.dbUsage {
+  margin-bottom: 24px;
+}
+
+.dbHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #888880;
+  margin-bottom: 8px;
+}
+
+.progressBar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: #3B82F6;
+  border-radius: 4px;
+}
+
+.tableStats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tableStat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.healthInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.healthLine {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.onlineBadge {
+  color: #00FF88;
+  font-weight: 700;
+}
+
+.linkText {
+  color: #3B82F6;
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.75rem;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.clearBtn {
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #EF4444;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.75rem;
+  color: #888880;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  font-size: 0.85rem;
+}
+
+.errorType {
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.errMsg {
+  color: #F0EDE6;
+  max-width: 500px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.timeCell {
+  color: #888880;
+  font-size: 0.75rem;
+}
+
+.viewBtn {
+  background: transparent;
+  border: none;
+  color: #3B82F6;
+  font-size: 0.75rem;
+  cursor: pointer;
+}

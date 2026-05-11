@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Script from 'next/script'
 import styles from './page.module.css'
 
 export default function LandingPage() {
@@ -207,7 +208,7 @@ export default function LandingPage() {
                 <div className={styles.integrationFeature}><span className={styles.integrationFeatureCheck}>✓</span> Mobile responsive</div>
               </div>
               <div className={styles.integrationCode}>
-                <span className={styles.cBlue}>&lt;script</span> <span className={styles.cPink}>src=</span><span className={styles.cGreen}>"https://askmela.xyz/widget.js"</span>...
+                <span className={styles.cBlue}>&lt;script</span> <span className={styles.cPink}>src=</span><span className={styles.cGreen}>&quot;https://askmela.xyz/widget.js&quot;</span>...
               </div>
               <a href="/docs" className={styles.integrationCta}>View widget docs →</a>
             </div>
@@ -318,6 +319,15 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* AskMela Widget - Self Demo */}
+      <Script 
+        src="/widget.js" 
+        data-business="00000000-0000-0000-0000-000000000000"
+        data-color="#00FF88"
+        data-position="bottom-right"
+        strategy="afterInteractive"
+      />
     </div>
   )
 }

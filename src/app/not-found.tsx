@@ -1,34 +1,48 @@
-import Link from 'next/link';
+import React from 'react'
+import Link from 'next/link'
+import styles from './not-found.module.css'
 
 export default function NotFound() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-4">
-      <div className="max-w-md w-full text-center space-y-8">
-        <h1 className="text-9xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 animate-pulse">
-          404
-        </h1>
-        <div className="space-y-4">
-          <h2 className="text-3xl font-semibold text-gray-100">Page Not Found</h2>
-          <p className="text-gray-400">
-            Oops! The page you're looking for has drifted into deep space. 
-            Let's get you back to safety.
-          </p>
+    <div className={styles.container}>
+      <div className={styles.content}>
+        <div className={styles.errorCode}>404</div>
+        <h1 className={styles.title}>Page not found</h1>
+        <p className={styles.description}>
+          Sorry, we couldn’t find the page you’re looking for. It might have been moved, deleted, or never existed.
+        </p>
+        
+        <div className={styles.actions}>
+          <Link href="/" className={styles.primaryBtn}>
+            Back to homepage
+          </Link>
+          <a href="https://t.me/AskMelaBot" className={styles.secondaryBtn}>
+            Contact support
+          </a>
         </div>
-        <div className="pt-8">
-          <Link 
-            href="/" 
-            className="px-8 py-3 bg-white text-black font-medium rounded-full hover:bg-gray-200 transition-all transform hover:scale-105 inline-block"
-          >
-            Go Home
+
+        <div className={styles.linksGrid}>
+          <Link href="/docs" className={styles.linkCard}>
+            <div className={styles.linkIcon}>📚</div>
+            <div className={styles.linkInfo}>
+              <div className={styles.linkTitle}>Documentation</div>
+              <div className={styles.linkDesc}>Learn how to use AskMela.</div>
+            </div>
+          </Link>
+          <Link href="/dashboard" className={styles.linkCard}>
+            <div className={styles.linkIcon}>📊</div>
+            <div className={styles.linkInfo}>
+              <div className={styles.linkTitle}>Dashboard</div>
+              <div className={styles.linkDesc}>Manage your business.</div>
+            </div>
           </Link>
         </div>
       </div>
-      
-      {/* Background decoration */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 opacity-20 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-600 rounded-full blur-[100px]"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-pink-600 rounded-full blur-[100px]"></div>
+
+      <div className={styles.background}>
+        <div className={styles.circle}></div>
+        <div className={styles.circle}></div>
       </div>
     </div>
-  );
+  )
 }

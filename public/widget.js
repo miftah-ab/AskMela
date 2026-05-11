@@ -1,115 +1,114 @@
 (function() {
-  // Get config from script tag
+  // 1. Get configuration from script tag
   const script = document.currentScript;
   const businessId = script.getAttribute('data-business');
-  const color = script.getAttribute('data-color') || '#00FF88';
+  const accentColor = script.getAttribute('data-color') || '#00FF88';
   const position = script.getAttribute('data-position') || 'bottom-right';
-  const greeting = script.getAttribute('data-greeting') || 'Hello! How can I help you today?';
+  const baseUrl = script.src.split('/widget.js')[0]; // Auto-detect base URL
 
   if (!businessId) {
-    console.error('AskMela: data-business attribute is required');
+    console.error('AskMela Widget: Missing data-business attribute');
     return;
   }
 
-  // Inject styles
+  // 2. Create styles
   const styles = `
-    #askmela-widget-btn {
+    #askmela-widget-container {
       position: fixed;
-      ${position.includes('right') ? 'right: 20px' : 'left: 20px'};
-      bottom: 20px;
-      width: 56px;
-      height: 56px;
+      ${position.includes('bottom') ? 'bottom: 20px;' : 'top: 20px;'}
+      ${position.includes('right') ? 'right: 20px;' : 'left: 20px;'}
+      z-index: 999999;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    #askmela-button {
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      background: ${color};
-      border: none;
+      background: ${accentColor};
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       cursor: pointer;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-      z-index: 999998;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    #askmela-widget-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+    #askmela-button:hover {
+      transform: scale(1.1);
     }
-    #askmela-widget-iframe {
-      position: fixed;
-      ${position.includes('right') ? 'right: 20px' : 'left: 20px'};
-      bottom: 88px;
+    #askmela-button svg {
+      width: 30px;
+      height: 30px;
+      fill: white;
+    }
+    #askmela-iframe-container {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
       width: 380px;
-      height: 580px;
-      border: none;
-      border-radius: 16px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
-      z-index: 999999;
-      display: none;
+      height: 600px;
+      max-height: calc(100vh - 120px);
+      max-width: calc(100vw - 40px);
       background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      overflow: hidden;
+      display: none;
+      transform-origin: bottom right;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+      transform: scale(0.9);
     }
-    #askmela-widget-iframe.open {
+    #askmela-iframe-container.open {
       display: block;
-      animation: askmela-slide-up 0.25s ease;
-    }
-    @keyframes askmela-slide-up {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
+      opacity: 1;
+      transform: scale(1);
     }
     @media (max-width: 480px) {
-      #askmela-widget-iframe {
-        width: calc(100vw - 24px);
+      #askmela-iframe-container {
+        width: calc(100vw - 40px);
         height: calc(100vh - 120px);
-        right: 12px;
-        left: 12px;
-        bottom: 80px;
       }
     }
   `;
 
-  const styleEl = document.createElement('style');
-  styleEl.textContent = styles;
-  document.head.appendChild(styleEl);
+  const styleSheet = document.createElement("style");
+  styleSheet.innerText = styles;
+  document.head.appendChild(styleSheet);
 
-  // Create button
-  const btn = document.createElement('button');
-  btn.id = 'askmela-widget-btn';
-  btn.setAttribute('aria-label', 'Open Ask Mela chat');
-  btn.innerHTML = `
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-      <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" 
-        fill="#0F172A"/>
-    </svg>
-  `;
+  // 3. Create DOM elements
+  const container = document.createElement('div');
+  container.id = 'askmela-widget-container';
 
-  // Create iframe
+  const button = document.createElement('div');
+  button.id = 'askmela-button';
+  button.innerHTML = `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>`;
+
+  const iframeContainer = document.createElement('div');
+  iframeContainer.id = 'askmela-iframe-container';
+  
   const iframe = document.createElement('iframe');
-  iframe.id = 'askmela-widget-iframe';
-  iframe.src = `https://askmela.addus.xyz/chat/widget/${businessId}?color=${encodeURIComponent(color)}&greeting=${encodeURIComponent(greeting)}`;
-  iframe.title = 'Ask Mela Chat';
-  iframe.allow = 'microphone';
+  iframe.src = `${baseUrl}/chat/widget/${businessId}?color=${encodeURIComponent(accentColor)}`;
+  iframe.style.width = '100%';
+  iframe.style.height = '100%';
+  iframe.style.border = 'none';
 
-  // Toggle open/close
+  iframeContainer.appendChild(iframe);
+  container.appendChild(iframeContainer);
+  container.appendChild(button);
+  document.body.appendChild(container);
+
+  // 4. Handle events
   let isOpen = false;
-  btn.addEventListener('click', () => {
+  button.onclick = () => {
     isOpen = !isOpen;
     if (isOpen) {
-      iframe.classList.add('open');
-      btn.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M18 6L6 18M6 6L18 18" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round"/>
-        </svg>
-      `;
+      iframeContainer.style.display = 'block';
+      setTimeout(() => iframeContainer.classList.add('open'), 10);
+      button.innerHTML = `<svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
     } else {
-      iframe.classList.remove('open');
-      btn.innerHTML = `
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" 
-            fill="#0F172A"/>
-        </svg>
-      `;
+      iframeContainer.classList.remove('open');
+      setTimeout(() => iframeContainer.style.display = 'none', 300);
+      button.innerHTML = `<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>`;
     }
-  });
-
-  document.body.appendChild(btn);
-  document.body.appendChild(iframe);
+  };
 })();

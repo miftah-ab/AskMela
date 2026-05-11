@@ -1,96 +1,73 @@
-'use client'
-
-import { useState } from 'react'
-import AdminSidebar from '@/components/admin/AdminSidebar'
+import React from 'react'
 import styles from './page.module.css'
+import { supabase } from '@/bot/services/supabase'
 
-export default function AdminAnnouncements() {
-  const [message, setMessage] = useState('')
-  const [sending, setSending] = useState(false)
-  const [sentCount, setSentCount] = useState(128) // Example active business count
+async function getAnnouncementHistory() {
+  const { data } = await supabase
+    .from('AskMelaAnnouncements')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(20)
+  
+  return data || []
+}
 
-  const handleSend = async () => {
-    if (!message.trim()) return
-    const confirmed = confirm(`Are you sure you want to send this message to all ${sentCount} active business owners?`)
-    if (!confirmed) return
+async function getTargetCount() {
+  const { count } = await supabase
+    .from('AskMelaBusinesses')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_active', true)
+  
+  return count || 0
+}
 
-    setSending(true)
-    try {
-      // API call placeholder
-      await new Promise(r => setTimeout(r, 1500))
-      alert('Announcement sent successfully!')
-      setMessage('')
-    } catch (err) {
-      alert('Failed to send announcement.')
-    } finally {
-      setSending(false)
-    }
-  }
+export default async function AnnouncementsAdminPage() {
+  const history = await getAnnouncementHistory()
+  const targetCount = await getTargetCount()
 
   return (
-    <div className={styles.adminPage}>
-      <AdminSidebar />
-      <main className={styles.main}>
-        <header className={styles.header}>
-          <div className={styles.headerTitle}>
-            <h1>Announcements</h1>
-            <p className="text-caption">Send updates to all active business owners</p>
-          </div>
-        </header>
-
-        <div className={styles.grid}>
-          <div className="card">
-            <h2 className="text-section-title" style={{ marginBottom: 20 }}>New Announcement</h2>
-            <div className={styles.field}>
-              <label className="input-label">Message (Amharic + English recommended)</label>
-              <textarea 
-                className="input" 
-                rows={8} 
-                placeholder="Write your announcement here..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                style={{ resize: 'none' }}
-              />
-            </div>
-            <div className={styles.actions}>
-              <button 
-                className="btn-primary" 
-                onClick={handleSend} 
-                disabled={sending || !message.trim()}
-              >
-                {sending ? '🚀 Sending...' : `Send to ${sentCount} Active Owners`}
-              </button>
+    <div className={styles.container}>
+      <div className={styles.grid}>
+        {/* Compose Section */}
+        <div className={styles.composeCard}>
+          <h3 className={styles.cardTitle}>New Global Announcement</h3>
+          <p className={styles.subtitle}>This message will be sent to <strong>{targetCount}</strong> active business owners via Telegram.</p>
+          
+          <textarea 
+            className={styles.textarea} 
+            placeholder="Write your message here (Markdown supported)..."
+            rows={8}
+          ></textarea>
+          
+          <div className={styles.previewArea}>
+            <div className={styles.previewLabel}>Telegram Preview</div>
+            <div className={styles.previewBubble}>
+               Your message will look like this in Telegram. Use bold and italic for emphasis.
             </div>
           </div>
 
-          <div className="card">
-            <h2 className="text-section-title" style={{ marginBottom: 20 }}>Telegram Preview</h2>
-            <div className={styles.preview}>
-              <div className={styles.previewHeader}>
-                <div className={styles.previewAvatar}>A</div>
-                <div className={styles.previewName}>AskMela Bot</div>
-              </div>
-              <div className={styles.previewBubble}>
-                {message || <span style={{ color: 'var(--text-tertiary)' }}>Your message will appear here...</span>}
-              </div>
-            </div>
-          </div>
+          <button className={styles.broadcastBtn}>🚀 Send Broadcast to {targetCount} Owners</button>
         </div>
 
-        <div className="card" style={{ marginTop: 40 }}>
-          <h2 className="text-section-title" style={{ marginBottom: 20 }}>Announcement History</h2>
-          <div className={styles.history}>
-            <div className={styles.historyItem}>
-              <div className={styles.historyText}>System maintenance scheduled for tonight at 2 AM.</div>
-              <div className={styles.historyMeta}>
-                <span>Sent to 124 owners</span>
-                <span>•</span>
-                <span>May 5, 2025</span>
-              </div>
-            </div>
+        {/* History Section */}
+        <div className={styles.historyCard}>
+          <h3 className={styles.cardTitle}>Broadcast History</h3>
+          <div className={styles.historyList}>
+             {history.map(item => (
+               <div key={item.id} className={styles.historyItem}>
+                  <div className={styles.historyHead}>
+                     <span className={styles.sentCount}>Sent to {item.sent_to_count}</span>
+                     <span className={styles.historyTime}>{new Date(item.created_at).toLocaleDateString()}</span>
+                  </div>
+                  <div className={styles.historyMsg}>{item.message}</div>
+               </div>
+             ))}
+             {history.length === 0 && (
+               <div className={styles.emptyState}>No announcements sent yet.</div>
+             )}
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

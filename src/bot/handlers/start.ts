@@ -21,27 +21,29 @@ export async function handleStart(ctx: Context) {
   const existing = await getBusinessByOwnerId(userId)
 
   if (existing) {
+    // 2.1 Fetch today's stats for the greeting
+    const { getTodayStats } = await import('../services/supabase')
+    const stats = await getTodayStats(existing.id)
+
     // Already registered — show dashboard summary
     const link = buildBotLink(existing.unique_link)
     await ctx.reply(
-      `🏪 *${existing.name}*\n\n` +
-        `✅ ቦቱ ንቁ ነው / Bot is live\n\n` +
-        `🔗 የደንበኞችዎ ሊንክ / Customer Link:\n\`${link}\`\n\n` +
-        `*ትዕዛዞች / Commands:*\n` +
-        `/stats — ስታቲስቲክስ / Statistics\n` +
-        `/help — እርዳታ / Help\n\n` +
-        `_ማንኛውም ጽሑፍ፣ ድምፅ ወይም ፎቶ ወደ ዕውቀት ቤቱ ይጨምሩ።_\n` +
-        `_Send any text, voice, or photo to update your knowledge base._`,
+      `🏪 *AskMela Owner Mode — ${existing.name}*\n\n` +
+        `📊 *Today's Stats:* ${stats.total_questions} questions, ${stats.answered_questions} answered.\n\n` +
+        `✅ *Bot is live:* Customers can chat here:\n\`${link}\`\n\n` +
+        `💡 *How to teach:* Just send me any text, voice message, or photo, and I will learn it instantly!\n\n` +
+        `*Commands:* /stats, /help, /clear`,
       {
         parse_mode: 'Markdown',
         reply_markup: {
           inline_keyboard: [
             [
-              { text: '📤 ሊንኩን ያጋሩ / Share Link', url: `https://t.me/share/url?url=${encodeURIComponent(link)}&text=Chat%20with%20our%20AI%20assistant!` },
+              { text: '📊 Full Stats', callback_data: 'stats' },
+              { text: '📤 Share Link', url: `https://t.me/share/url?url=${encodeURIComponent(link)}&text=Chat%20with%20our%20AI%20assistant!` },
             ],
             [
-              { text: '📊 ስታቲስቲክስ / Stats', callback_data: 'stats' },
-              { text: '❓ እርዳታ / Help', callback_data: 'help' },
+              { text: '📚 Manage Knowledge', url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard` },
+              { text: '❓ Help', callback_data: 'help' },
             ],
           ],
         },

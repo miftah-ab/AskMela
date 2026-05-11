@@ -1,138 +1,133 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { useSearchParams } from 'next/navigation'
+import React, { useState, useEffect, useRef } from 'react'
+import { useParams, useSearchParams } from 'next/navigation'
+import styles from './widget.module.css'
 
-export default function WidgetChatPage({ params }: { params: { businessId: string } }) {
+interface Message {
+  id: string
+  text: string
+  sender: 'customer' | 'bot'
+  timestamp: Date
+}
+
+export default function WidgetChatPage() {
+  const params = useParams()
   const searchParams = useSearchParams()
+  const businessId = params.businessId as string
   const accentColor = searchParams.get('color') || '#00FF88'
-  const initialGreeting = searchParams.get('greeting') || 'Hello! How can I help you today?'
-  
-  const [messages, setMessages] = useState<{role: 'user' | 'bot', text: string}[]>([
-    { role: 'bot', text: initialGreeting }
-  ])
+
+  const [businessName, setBusinessName] = useState('AskMela Assistant')
+  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  useEffect(() => {
+    // Fetch business name
+    fetch(`/api/v1/public/business/${businessId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.name) setBusinessName(data.name)
+      })
+      .catch(err => console.error('Failed to load business info', err))
+
+    // Initial greeting
+    setMessages([
+      {
+        id: '1',
+        text: `👋 Hello! How can I help you today?`,
+        sender: 'bot',
+        timestamp: new Date()
+      }
+    ])
+  }, [businessId])
 
   useEffect(() => {
-    scrollToBottom()
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, isTyping])
 
-  const handleSend = async () => {
-    if (!input.trim()) return
-    const userText = input
+  const handleSend = async (e?: React.FormEvent) => {
+    e?.preventDefault()
+    if (!input.trim() || isTyping) return
+
+    const userMsg: Message = {
+      id: Date.now().toString(),
+      text: input,
+      sender: 'customer',
+      timestamp: new Date()
+    }
+
+    setMessages(prev => [...prev, userMsg])
     setInput('')
-    setMessages(prev => [...prev, { role: 'user', text: userText }])
     setIsTyping(true)
 
     try {
-      const res = await fetch('/api/v1/ask', {
+      const response = await fetch('/api/v1/public/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          question: userText, 
-          business_id: params.businessId,
-          source: 'widget'
-        })
+        body: JSON.stringify({ businessId, question: userMsg.text })
       })
-      const data = await res.json()
-      setMessages(prev => [...prev, { role: 'bot', text: data.answer || "I'm sorry, I couldn't process that." }])
+
+      const data = await response.json()
+      
+      const botMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        text: data.answer || "I'm sorry, I couldn't find an answer to that.",
+        sender: 'bot',
+        timestamp: new Date()
+      }
+
+      setMessages(prev => [...prev, botMsg])
     } catch (err) {
-      setMessages(prev => [...prev, { role: 'bot', text: "Error connecting to service." }])
+      console.error('Chat error:', err)
     } finally {
       setIsTyping(false)
     }
   }
 
   return (
-    <div style={{ 
-      display: 'flex', flexDirection: 'column', height: '100vh', 
-      fontFamily: 'Inter, sans-serif', background: 'white' 
-    }}>
-      {/* Header */}
-      <div style={{ 
-        padding: '16px', borderBottom: '1px solid #E2E8F0', 
-        display: 'flex', alignItems: 'center', gap: '12px',
-        background: 'white'
-      }}>
-        <div style={{ 
-          width: '32px', height: '32px', borderRadius: '8px', 
-          background: accentColor, display: 'flex', alignItems: 'center', 
-          justifyContent: 'center', fontWeight: 'bold' 
-        }}>M</div>
-        <div style={{ fontWeight: 600, fontSize: '15px' }}>Ask Mela</div>
-      </div>
+    <div className={styles.container}>
+      <header className={styles.header} style={{ backgroundColor: accentColor }}>
+        <div className={styles.businessName}>{businessName}</div>
+      </header>
 
-      {/* Messages */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {messages.map((m, i) => (
-          <div key={i} style={{ 
-            alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
-            maxWidth: '85%', padding: '10px 14px', borderRadius: '14px',
-            fontSize: '14px', lineHeight: 1.5,
-            background: m.role === 'user' ? accentColor : '#F1F5F9',
-            color: m.role === 'user' ? '#0F172A' : '#0F172A',
-            borderBottomRightRadius: m.role === 'user' ? '2px' : '14px',
-            borderBottomLeftRadius: m.role === 'bot' ? '2px' : '14px',
-          }}>
-            {m.text}
+      <main className={styles.messagesArea}>
+        {messages.map(msg => (
+          <div key={msg.id} className={msg.sender === 'bot' ? styles.botMsgRow : styles.userMsgRow}>
+            <div className={msg.sender === 'bot' ? styles.botBubble : styles.userBubble} 
+                 style={msg.sender === 'customer' ? { backgroundColor: accentColor } : {}}>
+              {msg.text}
+            </div>
           </div>
         ))}
         {isTyping && (
-          <div style={{ alignSelf: 'flex-start', padding: '10px 14px', background: '#F1F5F9', borderRadius: '14px', borderBottomLeftRadius: '2px' }}>
-            <div style={{ display: 'flex', gap: '4px' }}>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#94A3B8', animation: 'pulse 1s infinite' }}></div>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#94A3B8', animation: 'pulse 1s 0.2s infinite' }}></div>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#94A3B8', animation: 'pulse 1s 0.4s infinite' }}></div>
+          <div className={styles.botMsgRow}>
+            <div className={styles.typingIndicator}>
+              <span></span><span></span><span></span>
             </div>
           </div>
         )}
         <div ref={messagesEndRef} />
-      </div>
+      </main>
 
-      {/* Input */}
-      <div style={{ padding: '16px', borderTop: '1px solid #E2E8F0' }}>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <input 
-            type="text" 
+      <footer className={styles.footer}>
+        <form className={styles.inputForm} onSubmit={handleSend}>
+          <input
+            type="text"
+            className={styles.input}
+            placeholder="Type a message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Ask anything..."
-            style={{ 
-              flex: 1, padding: '10px 14px', border: '1px solid #E2E8F0', 
-              borderRadius: '999px', fontSize: '14px', outline: 'none'
-            }}
           />
-          <button 
-            onClick={handleSend}
-            style={{ 
-              width: '40px', height: '40px', borderRadius: '50%', 
-              background: accentColor, border: 'none', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="#0F172A"/>
-            </svg>
+          <button type="submit" className={styles.sendBtn} style={{ color: accentColor }}>
+            <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
           </button>
+        </form>
+        <div className={styles.poweredBy}>
+          Powered by <a href="https://askmela.xyz" target="_blank" rel="noreferrer">AskMela</a>
         </div>
-        <div style={{ textAlign: 'center', marginTop: '12px', fontSize: '10px', color: '#94A3B8' }}>
-          Powered by <b>Ask Mela</b>
-        </div>
-      </div>
-
-      <style jsx global>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 0.4; }
-          50% { opacity: 1; }
-        }
-      `}</style>
+      </footer>
     </div>
   )
 }

@@ -1,0 +1,254 @@
+.container {
+  padding: 20px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+}
+
+.badgeGreen {
+  background: rgba(0, 255, 136, 0.1);
+  color: #00FF88;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.qrArea {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.linkDisplay {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.linkText {
+  font-size: 0.8rem;
+  color: #94A3B8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.copyBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.copyBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.instruction {
+  font-size: 0.9rem;
+  color: #94A3B8;
+  margin-bottom: 20px;
+}
+
+.customizer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  color: #94A3B8;
+  margin-bottom: 8px;
+}
+
+.field input, .field select {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 8px;
+  border-radius: 6px;
+  outline: none;
+}
+
+.codeBlock {
+  background: #0F172A;
+  padding: 16px;
+  border-radius: 8px;
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.codeBlock code {
+  display: block;
+  font-size: 0.75rem;
+  color: #00FF88;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+.codeBlock .copyBtn {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.instructionSmall {
+  font-size: 0.75rem;
+  color: #64748B;
+  margin-bottom: 20px;
+}
+
+.previewBtn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #00FF88;
+  color: #00FF88;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.keyGenerator {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  outline: none;
+}
+
+.primaryBtn {
+  background: #00FF88;
+  color: #0F172A;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.generatedKeyBox {
+  background: rgba(255, 170, 0, 0.1);
+  border: 1px dashed #FFAA00;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.keyWarning {
+  color: #FFAA00;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.keyValue {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.keyValue code {
+  color: white;
+  font-size: 0.9rem;
+  word-break: break-all;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #64748B;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #CBD5E1;
+  font-size: 0.9rem;
+}
+
+.revokeBtn {
+  background: rgba(255, 70, 70, 0.1);
+  color: #FF4646;
+  border: 1px solid rgba(255, 70, 70, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.revokeBtn:hover {
+  background: rgba(255, 70, 70, 0.2);
+}
+
+.docLink {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.docLink a {
+  color: #00FF88;
+  text-decoration: none;
+  font-weight: 600;
+}

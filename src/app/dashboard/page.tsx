@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import styles from './page.module.css'
+import ImportTab from '@/components/dashboard/ImportTab'
+import IntegrationsTab from '@/components/dashboard/IntegrationsTab'
 
 type Business = { id: string; name: string; description: string; unique_link: string; is_active: boolean; language: string }
 type Stats = { total_questions: number; answered_questions: number; unanswered_questions: number; unique_customers: number }
@@ -31,7 +33,7 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [docs, setDocs] = useState<Doc[]>([])
-  const [activeTab, setActiveTab] = useState<'overview' | 'conversations' | 'knowledge' | 'integrations'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'conversations' | 'knowledge' | 'integrations' | 'import'>('overview')
   const [copied, setCopied] = useState(false)
 
   // 1. Check Auth
@@ -130,10 +132,10 @@ export default function DashboardPage() {
       <aside className={styles.sidebar} id="dashboard-sidebar">
         <div className={styles.sidebarLogo}><AskMelaLogo size={32} /><span>AskMela</span></div>
         <nav className={styles.sidebarNav}>
-          {(['overview','conversations','knowledge', 'integrations'] as const).map(tab => (
+          {(['overview','conversations','knowledge', 'import', 'integrations'] as const).map(tab => (
             <button key={tab} id={`tab-${tab}`} className={`${styles.navItem} ${activeTab === tab ? styles.navItemActive : ''}`} onClick={() => setActiveTab(tab)}>
-              {tab === 'overview' ? '📊' : tab === 'conversations' ? '💬' : tab === 'knowledge' ? '📚' : '🔌'}
-              <span>{tab === 'overview' ? 'Overview' : tab === 'conversations' ? 'Conversations' : tab === 'knowledge' ? 'Knowledge Base' : 'Integrations'}</span>
+              {tab === 'overview' ? '📊' : tab === 'conversations' ? '💬' : tab === 'knowledge' ? '📚' : tab === 'import' ? '📥' : '🔌'}
+              <span>{tab === 'overview' ? 'Overview' : tab === 'conversations' ? 'Conversations' : tab === 'knowledge' ? 'Knowledge Base' : tab === 'import' ? 'Import Data' : 'Integrations'}</span>
             </button>
           ))}
         </nav>
@@ -155,7 +157,7 @@ export default function DashboardPage() {
       <main className={styles.main}>
         <div className={styles.topBar} id="dashboard-topbar">
           <div>
-            <h1 className="text-page-title">{activeTab === 'overview' ? 'Dashboard' : activeTab === 'conversations' ? 'Conversations' : activeTab === 'knowledge' ? 'Knowledge Base' : 'Integrations'}</h1>
+            <h1 className="text-page-title">{activeTab === 'overview' ? 'Dashboard' : activeTab === 'conversations' ? 'Conversations' : activeTab === 'knowledge' ? 'Knowledge Base' : activeTab === 'import' ? 'Import Data' : 'Integrations'}</h1>
             <p className="text-caption">ዛሬ / Today — {new Date().toLocaleDateString('en-ET', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
           </div>
           {business && (
@@ -255,37 +257,21 @@ export default function DashboardPage() {
                 </div>
               </div>
             )}
-            {activeTab === 'integrations' && (
+            {/* Import Data Tab */}
+            {activeTab === 'import' && business && (
+              <div className={styles.content} id="import-content">
+                <ImportTab businessId={business.id} onRefreshDocs={fetchData} />
+              </div>
+            )}
+
+            {activeTab === 'integrations' && business && (
               <div className={styles.content} id="integrations-content">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-                  {/* Telegram */}
-                  <div className="card">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                      <h3 className="text-section-title">Telegram Bot</h3>
-                      <span className="badge-green">Active</span>
-                    </div>
-                    <p className="text-caption" style={{ marginBottom: '16px' }}>Share your link with customers to start chatting.</p>
-                    <div className={styles.topBarLink} style={{ margin: 0, padding: '8px' }}>
-                      <span className={styles.linkChip} style={{ fontSize: '12px' }}>{botLink}</span>
-                    </div>
-                  </div>
-
-                  {/* Widget */}
-                  <div className="card">
-                    <h3 className="text-section-title" style={{ marginBottom: '16px' }}>Website Widget</h3>
-                    <p className="text-caption" style={{ marginBottom: '16px' }}>Paste this code before the {'</body>'} tag on your website.</p>
-                    <div style={{ background: '#F1F5F9', padding: '12px', borderRadius: '8px', fontSize: '12px', fontFamily: 'monospace', marginBottom: '16px' }}>
-                      {`<script src="https://askmela.xyz/widget.js" data-business="${business?.id}"></script>`}
-                    </div>
-                  </div>
-
-                  {/* REST API */}
-                  <div className="card" style={{ gridColumn: 'span 2' }}>
-                    <h3 className="text-section-title" style={{ marginBottom: '16px' }}>REST API</h3>
-                    <p className="text-caption" style={{ marginBottom: '16px' }}>Manage your API keys for custom integrations.</p>
-                    <button className="btn-primary" style={{ fontSize: '14px', width: 'auto' }}>Generate API Key</button>
-                  </div>
-                </div>
+                <IntegrationsTab 
+                  businessId={business.id} 
+                  uniqueLink={business.unique_link}
+                  initialWidgetColor={(business as any).widget_color}
+                  initialWidgetPosition={(business as any).widget_position}
+                />
               </div>
             )}
           </>

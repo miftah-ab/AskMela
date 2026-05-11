@@ -4,6 +4,8 @@ import { addToKnowledgeBase } from '../services/rag'
 import { truncate } from '../utils/format'
 import { transcribeAudio, extractTextFromPhoto } from '../services/groq'
 import { supabase } from '../services/supabase'
+import { ImportService } from '../../lib/import-service'
+import fetch from 'node-fetch'
 
 /**
  * Handle text messages from business owners — adds to knowledge base.
@@ -151,5 +153,86 @@ export async function handleClearKnowledge(ctx: Context) {
   } catch (err) {
     console.error('Clear KB error:', err)
     await ctx.reply('❌ ማጽዳት አልተቻለም / Failed to clear knowledge base.')
+  }
+}
+
+/**
+ * Handle document files from owners (CSV, Excel, PDF, etc).
+ */
+export async function handleOwnerDocument(ctx: Context) {
+  const userId = ctx.from?.id
+  if (!userId) return
+
+  const business = await getBusinessByOwnerId(userId)
+  if (!business) return
+
+  const doc = (ctx.message as any).document
+  if (!doc) return
+
+  const fileName = doc.file_name || 'document'
+  const extension = fileName.split('.').pop()?.toLowerCase()
+
+  const supported = ['csv', 'xlsx', 'xls', 'pdf', 'docx', 'txt']
+  if (!extension || !supported.includes(extension)) {
+    await ctx.reply(`⚠️ ይህ ፋይል አይደገፍም / File type not supported: .${extension}\nየሚደገፉ: CSV, Excel, PDF, Word, Text`)
+    return
+  }
+
+  await ctx.reply(`📥 ${fileName} እየተነበበ ነው... / Processing ${fileName}...`)
+  await ctx.sendChatAction('typing')
+
+  try {
+    const fileLink = await ctx.telegram.getFileLink(doc.file_id)
+    const response = await fetch(fileLink.href)
+    const buffer = Buffer.from(await response.arrayBuffer())
+
+    // Create import record
+    const { data: importRec } = await supabase
+      .from('AskMelaImports')
+      .insert({
+        business_id: business.id,
+        type: extension,
+        file_name: fileName,
+        status: 'processing'
+      })
+      .select()
+      .single()
+
+    let result
+    if (extension === 'csv') {
+      result = await ImportService.processCSV(buffer, business.id, importRec.id)
+    } else if (extension === 'xlsx' || extension === 'xls') {
+      result = await ImportService.processExcel(buffer, business.id, importRec.id)
+    } else if (extension === 'pdf') {
+      result = await ImportService.processPDF(buffer, business.id, importRec.id)
+    } else if (extension === 'docx') {
+      result = await ImportService.processWord(buffer, business.id, importRec.id)
+    } else {
+      result = await ImportService.processText(buffer, business.id, importRec.id)
+    }
+
+    await supabase
+      .from('AskMelaImports')
+      .update({ 
+        status: result.success ? 'completed' : 'failed',
+        row_count: result.count,
+        error: result.error
+      })
+      .eq('id', importRec.id)
+
+    if (result.success) {
+      await ctx.reply(
+        `✅ *በተሳካ ሁኔታ ተጭኗል / Successfully imported!*\n\n` +
+          `ፋይል: ${fileName}\n` +
+          `የተገኙ መረጃዎች: ${result.count}\n\n` +
+          `ደንበኞችዎ አሁን እነዚህን መረጃዎች ማግኘት ይችላሉ።`,
+        { parse_mode: 'Markdown' }
+      )
+    } else {
+      await ctx.reply(`❌ ስህተት ተፈጥሯል: ${result.error || 'Unknown error'}`)
+    }
+  } catch (err) {
+    console.error('Document import error:', err)
+    await ctx.reply('❌ ፋይሉን መጫን አልተቻለም / Failed to import document.')
   }
 }

@@ -1,22 +1,76 @@
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-import AdminSidebar from '@/components/admin/AdminSidebar'
+import React from 'react'
+import { notFound, redirect } from 'next/navigation'
+import { getAdminSession } from '@/lib/admin-auth'
+import styles from './layout.module.css'
+import Link from 'next/link'
 
-export default async function ControlLayout({
-  children,
-}: {
+interface AdminLayoutProps {
   children: React.ReactNode
-}) {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('askmela_admin_token')
+}
 
-  // This check is server-side
-  // We'll handle the path-based exclusion in the page level or middleware
-  // For now, let's assume all sub-pages under /control require auth except /control itself
+export default async function AdminLayout({ children }: AdminLayoutProps) {
+  const session = await getAdminSession()
+
+  // 🛡️ SECURITY: Return 404 if not authorized
+  if (!session) {
+    notFound()
+  }
+
+  const nodeEnv = process.env.NODE_ENV === 'production' ? 'PRODUCTION' : 'DEVELOPMENT'
 
   return (
-    <div style={{ display: 'flex' }}>
-      {children}
+    <div className={styles.container}>
+      {/* Sidebar */}
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarHeader}>
+          <div className={styles.logoMark}>M</div>
+          <div>
+            <div className={styles.logoText}>AskMela</div>
+            <div className={styles.controlLabel}>CONTROL PANEL</div>
+          </div>
+        </div>
+
+        <nav className={styles.nav}>
+          <Link href="/control/dashboard" className={styles.navItem}>
+            <span className={styles.navIcon}>📊</span> Overview
+          </Link>
+          <Link href="/control/businesses" className={styles.navItem}>
+            <span className={styles.navIcon}>🏢</span> Businesses
+          </Link>
+          <Link href="/control/conversations" className={styles.navItem}>
+            <span className={styles.navIcon}>💬</span> Conversations
+          </Link>
+          <Link href="/control/system" className={styles.navItem}>
+            <span className={styles.navIcon}>⚙️</span> System
+          </Link>
+          <Link href="/control/announcements" className={styles.navItem}>
+            <span className={styles.navIcon}>📣</span> Announcements
+          </Link>
+        </nav>
+
+        <div className={styles.sidebarBottom}>
+          <div className={styles.adminId}>Admin ID: {session.telegramId}</div>
+          <button className={styles.logoutBtn}>🚪 Logout</button>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className={styles.mainWrapper}>
+        <header className={styles.header}>
+          <div className={styles.headerTitle}>Overview</div>
+          <div className={styles.headerActions}>
+             <div className={nodeEnv === 'PRODUCTION' ? styles.badgeProd : styles.badgeDev}>
+               {nodeEnv}
+             </div>
+             <div className={styles.lastUpdated}>Updated: {new Date().toLocaleTimeString()}</div>
+             <button className={styles.refreshBtn}>🔄</button>
+          </div>
+        </header>
+
+        <main className={styles.content}>
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

@@ -1,91 +1,80 @@
-'use client'
-
-import { useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
 
 export default function DocsPage() {
-  const [activeSection, setActiveSection] = useState('getting-started')
-
-  const sections = [
-    { id: 'getting-started', title: 'Getting Started' },
-    { id: 'telegram-bot', title: 'Telegram Bot' },
-    { id: 'website-widget', title: 'Website Widget' },
-    { id: 'rest-api', title: 'REST API' },
-    { id: 'webhooks', title: 'Webhooks' },
-  ]
-
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'white', color: '#0F172A', fontFamily: 'Inter, sans-serif' }}>
-      {/* Sidebar */}
-      <aside style={{ width: '280px', borderRight: '1px solid #E2E8F0', padding: '40px 24px', position: 'sticky', top: 0, height: '100vh' }}>
-        <Link href="/" style={{ fontSize: '20px', fontWeight: 700, textDecoration: 'none', color: '#0F172A', display: 'block', marginBottom: '40px' }}>
-          AskMela <span style={{ color: '#94A3B8', fontWeight: 400 }}>Docs</span>
+    <div>
+      <h1 id="intro" style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1rem', letterSpacing: '-0.02em' }}>Introduction</h1>
+      <p style={{ fontSize: '1.2rem', color: '#64748B', marginBottom: '2rem' }}>
+        AskMela is the easiest way to add an AI assistant to your Ethiopian business. It talks to your customers in Amharic and English, answering their questions about products, pricing, and services instantly.
+      </p>
+
+      <div style={{ 
+        padding: '24px', 
+        background: '#F8FAFC', 
+        borderLeft: '4px solid #00FF88', 
+        borderRadius: '8px',
+        marginBottom: '2rem' 
+      }}>
+        <h4 style={{ margin: 0, color: '#0F172A', fontWeight: 700 }}>Ethiopia First</h4>
+        <p style={{ margin: '8px 0 0', color: '#475569', fontSize: '0.95rem' }}>
+          Unlike generic bots, AskMela is optimized for the Ethiopian context, supporting local languages and common business workflows like menu reading and voice message transcription.
+        </p>
+      </div>
+
+      <h2 id="how-it-works" style={{ fontSize: '1.75rem', fontWeight: 700, marginTop: '3rem', marginBottom: '1rem' }}>How it works</h2>
+      <p style={{ marginBottom: '1.5rem' }}>
+        AskMela uses RAG (Retrieval Augmented Generation) to grounding AI answers in your specific business data. Instead of making things up, the AI searches your &quot;Knowledge Base&quot; for every question.
+      </p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '3rem' }}>
+        <div style={{ padding: '20px', border: '1px solid #E2E8F0', borderRadius: '12px' }}>
+          <div style={{ fontSize: '1.5rem', marginBottom: '8px' }}>🧠</div>
+          <h4 style={{ margin: 0, fontWeight: 700 }}>Teach</h4>
+          <p style={{ margin: '8px 0 0', fontSize: '0.85rem', color: '#64748B' }}>Send text, voice, or photos to the bot.</p>
+        </div>
+        <div style={{ padding: '20px', border: '1px solid #E2E8F0', borderRadius: '12px' }}>
+          <div style={{ fontSize: '1.5rem', marginBottom: '8px' }}>🔗</div>
+          <h4 style={{ margin: 0, fontWeight: 700 }}>Connect</h4>
+          <p style={{ margin: '8px 0 0', fontSize: '0.85rem', color: '#64748B' }}>Link your Telegram or Website.</p>
+        </div>
+        <div style={{ padding: '20px', border: '1px solid #E2E8F0', borderRadius: '12px' }}>
+          <div style={{ fontSize: '1.5rem', marginBottom: '8px' }}>💬</div>
+          <h4 style={{ margin: 0, fontWeight: 700 }}>Answer</h4>
+          <p style={{ margin: '8px 0 0', fontSize: '0.85rem', color: '#64748B' }}>Customers get instant local answers.</p>
+        </div>
+      </div>
+
+      <h2 id="next-steps" style={{ fontSize: '1.75rem', fontWeight: 700, marginTop: '3rem', marginBottom: '1rem' }}>Next steps</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        If you want to try it out immediately, check our <a href="/docs/quickstart" style={{ color: '#00FF88', textDecoration: 'underline' }}>Quickstart Guide</a> or see our &quot;Website Widget&quot; integration.
+        <Link href="/docs/quickstart" style={{ 
+          padding: '16px', 
+          background: '#0F172A', 
+          color: 'white', 
+          borderRadius: '8px', 
+          textDecoration: 'none',
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontWeight: 600
+        }}>
+          <span>🚀 Get started in 2 minutes</span>
+          <span>→</span>
         </Link>
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {sections.map(s => (
-            <button 
-              key={s.id}
-              onClick={() => setActiveSection(s.id)}
-              style={{ 
-                textAlign: 'left', padding: '10px 12px', borderRadius: '8px', border: 'none', cursor: 'pointer',
-                background: activeSection === s.id ? '#F0FFF8' : 'transparent',
-                color: activeSection === s.id ? '#065F46' : '#64748B',
-                fontWeight: activeSection === s.id ? 600 : 500,
-                transition: 'all 0.2s'
-              }}
-            >
-              {s.title}
-            </button>
-          ))}
-        </nav>
-      </aside>
-
-      {/* Content */}
-      <main style={{ flex: 1, padding: '80px 120px', maxWidth: '1000px' }}>
-        {activeSection === 'getting-started' && (
-          <div>
-            <h1 style={{ fontSize: '40px', fontWeight: 700, marginBottom: '24px' }}>Getting Started</h1>
-            <p style={{ fontSize: '18px', color: '#475569', lineHeight: 1.6, marginBottom: '32px' }}>
-              Ask Mela is an AI-powered assistant designed specifically for Ethiopian businesses. It allows you to automate customer service in Amharic and English across multiple channels.
-            </p>
-            <h2 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '16px' }}>Prerequisites</h2>
-            <p style={{ color: '#475569', marginBottom: '24px' }}>To start using Ask Mela, you'll need a Telegram account to register your business and manage your knowledge base.</p>
-          </div>
-        )}
-
-        {activeSection === 'website-widget' && (
-          <div>
-            <h1 style={{ fontSize: '40px', fontWeight: 700, marginBottom: '24px' }}>Website Widget</h1>
-            <p style={{ fontSize: '18px', color: '#475569', lineHeight: 1.6, marginBottom: '32px' }}>
-              Add a live chat bubble to your website with just one line of code.
-            </p>
-            <h2 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '16px' }}>Installation</h2>
-            <div style={{ background: '#0F172A', color: '#94A3B8', padding: '24px', borderRadius: '12px', fontFamily: 'monospace', marginBottom: '24px', overflowX: 'auto' }}>
-              <code style={{ color: '#7DD3FC' }}>&lt;script</code><br/>
-              &nbsp;&nbsp;<code style={{ color: '#F9A8D4' }}>src=</code><code style={{ color: '#00FF88' }}>"https://askmela.addus.xyz/widget.js"</code><br/>
-              &nbsp;&nbsp;<code style={{ color: '#F9A8D4' }}>data-business=</code><code style={{ color: '#00FF88' }}>"YOUR_BUSINESS_ID"</code><br/>
-              &nbsp;&nbsp;<code style={{ color: '#F9A8D4' }}>data-color=</code><code style={{ color: '#00FF88' }}>"#00FF88"</code><br/>
-              <code style={{ color: '#7DD3FC' }}>&gt;&lt;/script&gt;</code>
-            </div>
-          </div>
-        )}
-
-        {activeSection === 'rest-api' && (
-          <div>
-            <h1 style={{ fontSize: '40px', fontWeight: 700, marginBottom: '24px' }}>REST API</h1>
-            <p style={{ fontSize: '18px', color: '#475569', lineHeight: 1.6, marginBottom: '32px' }}>
-              The Ask Mela API allows you to programmatically interact with your AI assistant.
-            </p>
-            <h2 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '16px' }}>Ask a Question</h2>
-            <div style={{ background: '#0F172A', color: '#94A3B8', padding: '24px', borderRadius: '12px', fontFamily: 'monospace', marginBottom: '24px', overflowX: 'auto' }}>
-              <span style={{ color: '#FDE68A' }}>curl</span> -X POST https://askmela.addus.xyz/api/v1/ask \<br/>
-              &nbsp;&nbsp;-H <span style={{ color: '#00FF88' }}>"Authorization: Bearer YOUR_API_KEY"</span> \<br/>
-              &nbsp;&nbsp;-H <span style={{ color: '#00FF88' }}>"Content-Type: application/json"</span> \<br/>
-              &nbsp;&nbsp;-d <span style={{ color: '#00FF88' }}>{'\'{"question": "ዋጋው ስንት ነው?"}\''}</span>
-            </div>
-          </div>
-        )}
-      </main>
+        <Link href="/docs/api" style={{ 
+          padding: '16px', 
+          border: '1px solid #E2E8F0', 
+          color: '#0F172A', 
+          borderRadius: '8px', 
+          textDecoration: 'none',
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontWeight: 600
+        }}>
+          <span>💻 Explore the REST API</span>
+          <span>→</span>
+        </Link>
+      </div>
     </div>
   )
 }

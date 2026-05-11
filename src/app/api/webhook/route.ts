@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { bot } from '@/bot/index'
+import { bot } from '@/bot/core'
+
+export const dynamic = 'force-dynamic'
 
 /**
  * POST /api/webhook
