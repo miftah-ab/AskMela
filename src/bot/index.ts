@@ -16,7 +16,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN!)
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 
-bot.use(session())
+// bot.use(session()) // Removed as it is incompatible with Vercel serverless functions
 bot.use(rateLimitMiddleware)
 
 // ─── Commands ─────────────────────────────────────────────────────────────────

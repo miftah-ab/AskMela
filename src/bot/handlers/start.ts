@@ -90,12 +90,7 @@ async function handleCustomerStart(ctx: Context, uniqueLink: string) {
     return
   }
 
-  // Store business context in session
-  if ((ctx as any).session !== undefined) {
-    ;(ctx as any).session.currentBusinessId = business.id
-    ;(ctx as any).session.currentBusinessName = business.name
-    ;(ctx as any).session.isCustomer = true
-  }
+  // Note: Business context is now stored in Supabase (AskMelaBotContext) via setCustomerBusiness
 
   await ctx.reply(
     `👋 *ሰላም! / Hello!*\n\n` +
