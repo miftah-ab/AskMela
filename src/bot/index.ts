@@ -6,7 +6,7 @@ import { handleHelp } from './handlers/help'
 import { handleStats } from './handlers/stats'
 import { handleVoice } from './handlers/voice'
 import { handlePhoto } from './handlers/photo'
-import { handleMessage, setCustomerBusiness, customerSessions } from './handlers/customer'
+import { handleMessage, setCustomerBusiness } from './handlers/customer'
 import { isAdmin, handleAdminStats, handleAdminAnnounce } from './handlers/admin'
 import { rateLimitMiddleware } from './middleware/rateLimit'
 
@@ -25,7 +25,7 @@ bot.start(async (ctx) => {
   // Capture deep link payload for customer routing
   const payload = ctx.startPayload
   if (payload?.startsWith('biz_')) {
-    setCustomerBusiness(ctx.from.id, payload)
+    await setCustomerBusiness(ctx.from.id, payload)
   }
   await handleStart(ctx)
 })
@@ -88,7 +88,11 @@ async function launch() {
   }
 }
 
-launch().catch(console.error)
+// Only launch the bot if we are not in a Vercel/Serverless environment
+// Vercel will use the /api/webhook route which calls bot.handleUpdate directly.
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  launch().catch(console.error)
+}
 
 // Graceful shutdown
 process.once('SIGINT', () => bot.stop('SIGINT'))

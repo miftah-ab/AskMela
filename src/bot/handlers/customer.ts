@@ -5,18 +5,21 @@ import {
   saveConversation,
   upsertStats,
   createNotification,
+  setBotUserContext,
+  getBotUserContext,
 } from '../services/supabase'
 import { notifyOwnerUnanswered } from '../services/notifications'
 import { detectLanguage } from '../utils/language'
 
-// In-memory session for customer→business mapping (use Redis for production)
-const customerSessions = new Map<number, string>() // telegramId → uniqueLink
-
 /**
  * Set business context for a customer (called from start handler).
  */
-export function setCustomerBusiness(telegramId: number, uniqueLink: string) {
-  customerSessions.set(telegramId, uniqueLink)
+export async function setCustomerBusiness(telegramId: number, uniqueLink: string) {
+  try {
+    await setBotUserContext(telegramId, uniqueLink)
+  } catch (err) {
+    console.error('Failed to persist customer context:', err)
+  }
 }
 
 /**
@@ -31,7 +34,14 @@ export async function handleCustomerQuestion(
   if (!userId || !questionText.trim()) return
 
   // Look up which business this customer is talking to
-  const uniqueLink = customerSessions.get(userId)
+  let uniqueLink: string | null = null
+  try {
+    uniqueLink = await getBotUserContext(userId)
+  } catch (err) {
+    await ctx.reply('❌ የዳታቤዝ ስህተት አጋጥሟል / Database error occurred. Please try /start again.')
+    return
+  }
+
   if (!uniqueLink) {
     await ctx.reply(
       '👋 ሰላም! ለመጀመር የንግዱን ሊንክ ጠቅ ያድርጉ / Hello! Please click a business link to start.'
@@ -143,5 +153,3 @@ export async function handleMessage(ctx: Context) {
     await handleCustomerQuestion(ctx, text, 'text')
   }
 }
-
-export { customerSessions }

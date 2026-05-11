@@ -247,3 +247,31 @@ export async function getTodayStats(businessId: string) {
     }
   )
 }
+// ─── Bot Context (Session Replacement) ─────────────────────────────────────────
+
+export async function setBotUserContext(telegramId: number, uniqueLink: string) {
+  const { error } = await supabase
+    .from('AskMelaBotContext')
+    .upsert({
+      telegram_id: telegramId,
+      business_unique_link: uniqueLink,
+      last_interaction_at: new Date().toISOString(),
+    })
+  if (error) {
+    console.error('CRITICAL: Failed to set bot context in Supabase:', error.message)
+    throw error // Re-throw to be caught by bot.catch
+  }
+}
+
+export async function getBotUserContext(telegramId: number) {
+  const { data, error } = await supabase
+    .from('AskMelaBotContext')
+    .select('business_unique_link')
+    .eq('telegram_id', telegramId)
+    .single()
+  if (error && error.code !== 'PGRST116') { // PGRST116 is 'no rows found'
+    console.error('CRITICAL: Failed to get bot context from Supabase:', error.message)
+    throw error
+  }
+  return data?.business_unique_link || null
+}
