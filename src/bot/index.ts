@@ -1,6 +1,33 @@
 import dotenv from 'dotenv'
-dotenv.config({ path: `.env.${process.env.NODE_ENV || 'development'}` })
-import { Telegraf, session } from 'telegraf'
+import path from 'path'
+import { Telegraf } from 'telegraf'
+
+// ─── Environment Validation ──────────────────────────────────────────────────
+const nodeEnv = process.env.NODE_ENV || 'development'
+dotenv.config({ path: path.resolve(process.cwd(), `.env.${nodeEnv}`) })
+
+const requiredEnv = [
+  'BOT_TOKEN',
+  'SUPABASE_URL',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'GROQ_API_KEY'
+]
+
+if (nodeEnv === 'production') {
+  requiredEnv.push('WEBHOOK_URL', 'WEBHOOK_SECRET')
+}
+
+console.log(`🔧 Initializing AskMela Bot in ${nodeEnv} mode...`)
+
+for (const env of requiredEnv) {
+  if (!process.env[env]) {
+    console.error(`❌ CRITICAL ERROR: Missing environment variable: ${env}`)
+    console.error(`Check your .env.${nodeEnv} file or hosting provider settings.`)
+    process.exit(1)
+  }
+}
+
+// ─── Imports ──────────────────────────────────────────────────────────────────
 import { handleStart } from './handlers/start'
 import { handleHelp } from './handlers/help'
 import { handleStats } from './handlers/stats'
@@ -10,19 +37,13 @@ import { handleMessage, setCustomerBusiness } from './handlers/customer'
 import { isAdmin, handleAdminStats, handleAdminAnnounce } from './handlers/admin'
 import { rateLimitMiddleware } from './middleware/rateLimit'
 
-// ─── Bot Initialization ───────────────────────────────────────────────────────
-
 const bot = new Telegraf(process.env.BOT_TOKEN!)
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
-
-// bot.use(session()) // Removed as it is incompatible with Vercel serverless functions
 bot.use(rateLimitMiddleware)
 
-// ─── Commands ─────────────────────────────────────────────────────────────────
-
+// ─── Commands & Handlers ───────────────────────────────────────────────────────
 bot.start(async (ctx) => {
-  // Capture deep link payload for customer routing
   const payload = ctx.startPayload
   if (payload?.startsWith('biz_')) {
     await setCustomerBusiness(ctx.from.id, payload)
@@ -32,18 +53,12 @@ bot.start(async (ctx) => {
 
 bot.command('help', handleHelp)
 bot.command('stats', handleStats)
-
-// Admin Commands
 bot.command('adminstats', isAdmin, handleAdminStats)
 bot.command('adminannounce', isAdmin, handleAdminAnnounce)
-
-// ─── Message Handlers ─────────────────────────────────────────────────────────
 
 bot.on('voice', handleVoice)
 bot.on('photo', handlePhoto)
 bot.on('text', handleMessage)
-
-// ─── Callback Queries ─────────────────────────────────────────────────────────
 
 bot.action('stats', async (ctx) => {
   await ctx.answerCbQuery()
@@ -55,47 +70,48 @@ bot.action('help', async (ctx) => {
   await handleHelp(ctx)
 })
 
-// ─── Error Handling ───────────────────────────────────────────────────────────
-
-bot.catch((err, ctx) => {
-  console.error(`Bot error for ${ctx.updateType}:`, err)
+bot.catch((err: any, ctx) => {
+  console.error(`💥 Bot error for ${ctx.updateType}:`, err.message || err)
 })
 
-// ─── Launch ───────────────────────────────────────────────────────────────────
-
+// ─── Launch Logic ─────────────────────────────────────────────────────────────
 async function launch() {
-  if (process.env.NODE_ENV === 'production') {
-    // Webhook mode for production
+  if (nodeEnv === 'production') {
     const webhookUrl = process.env.WEBHOOK_URL!
     const secretToken = process.env.WEBHOOK_SECRET!
-    const port = parseInt(process.env.PORT || '3001')
+    const port = parseInt(process.env.PORT || '3000')
 
+    console.log(`📡 Setting up webhook: ${webhookUrl}`)
     await bot.launch({
       webhook: {
         domain: webhookUrl,
-        port,
-        secretToken,
+        port: port,
+        hookPath: '/webhook',
+        secretToken: secretToken,
       },
     })
-
-    console.log(`🚀 AskMela bot running in webhook mode on port ${port}`)
-    console.log(`📡 Webhook: ${webhookUrl}/telegraf/${bot.secretPathComponent()}`)
+    console.log(`🚀 AskMela Bot is LIVE on Render (Port: ${port})`)
+    console.log(`📡 Webhook Path: /webhook`)
   } else {
-    // Long polling for development
+    console.log('🤖 Starting bot in Long Polling mode...')
     await bot.launch()
-    console.log(`🤖 AskMela bot running in polling mode (development)`)
-    console.log(`📱 Bot: @${process.env.NEXT_PUBLIC_BOT_USERNAME}`)
+    console.log('✅ Bot is running locally.')
   }
 }
 
-// Only launch the bot if we are not in a Vercel/Serverless environment
-// Vercel will use the /api/webhook route which calls bot.handleUpdate directly.
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  launch().catch(console.error)
+launch().catch((err) => {
+  console.error('❌ Failed to launch bot:', err)
+  process.exit(1)
+})
+
+// ─── Graceful Shutdown ────────────────────────────────────────────────────────
+const shutdown = (signal: string) => {
+  console.log(`\n🛑 Received ${signal}. Shutting down bot...`)
+  bot.stop(signal)
+  process.exit(0)
 }
 
-// Graceful shutdown
-process.once('SIGINT', () => bot.stop('SIGINT'))
-process.once('SIGTERM', () => bot.stop('SIGTERM'))
+process.once('SIGINT', () => shutdown('SIGINT'))
+process.once('SIGTERM', () => shutdown('SIGTERM'))
 
 export { bot }

@@ -15,7 +15,7 @@ async function setWebhook() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      url: `${webhookUrl}/api/webhook`,
+      url: `${webhookUrl}/webhook`,
       secret_token: secret,
       allowed_updates: ['message', 'callback_query'],
       drop_pending_updates: true,

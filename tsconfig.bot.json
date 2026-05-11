@@ -5,15 +5,27 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"]
     }
   },
-  "include": ["src/bot/**/*"],
-  "exclude": ["node_modules", "src/web"]
+  "include": [
+    "src/bot/**/*",
+    "src/bot/services/**/*",
+    "src/bot/handlers/**/*",
+    "src/bot/utils/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/app",
+    "src/components",
+    "dist",
+    ".next"
+  ]
 }
